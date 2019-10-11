@@ -1,1 +1,1 @@
-# DigiMosque
+# TRAI Hackathon
