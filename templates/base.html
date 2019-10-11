@@ -1,0 +1,137 @@
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+
+</head>
+	
+<!-- <p>Click the button to get your coordinates.</p> -->
+
+<!-- <button onclick="getLocation()">Try It</button> -->
+<body>
+	<p id="demo"></p>
+
+	<script>
+	var x = document.getElementById("demo");
+
+	function getLocation() {
+	  if (navigator.geolocation) {
+	    navigator.geolocation.getCurrentPosition(showPosition);
+	  } else { 
+	    x.innerHTML = "Geolocation is not supported by this browser.";
+	  }
+	}
+
+	function showPosition(position) {
+	  // x.innerHTML = "Latitude: " + position.coords.latitude + 
+	  // "<br>Longitude: " + position.coords.longitude;
+	  mosque_lat.value=position.coords.latitude;
+	  mosque_lon.value=position.coords.longitude;
+
+	}
+	</script>
+
+
+
+	<script>
+    $("#file-picker").change(function(){
+    	
+        
+        var input = document.getElementById('file-picker');
+        for (var i=0; i<input.files.length; i++)
+        {
+        //koala.jpg, koala.JPG substring(index) lastIndexOf('a') koala.1.jpg
+            var ext= input.files[i].name.substring(input.files[i].name.lastIndexOf('.')+1).toLowerCase()
+            file_names=file_names+ext
+            if ((ext == 'jpg') || (ext == 'png') || (ext  == 'jpeg'))
+            {
+                $("#msg").text("Files are supported")
+            }
+            else
+            {
+                $("#msg").text("Files are NOT supported")
+                document.getElementById("file-picker").value ="";
+            }
+        }
+
+        
+    } );
+	</script>
+
+
+	<form action="/load_in_db" method="post" enctype="multipart/form-data">
+
+
+
+		<div class="container">
+		  <h2>Enter the details of the mosque</h2>
+		  <!-- <form action="/get_reviews"> -->
+		    <div class="form-group">
+		    	<label>Mosque Name:</label>	 
+		      	<input type="text" onfocus="this.value=''" class="form-control" id="mosque_name" placeholder="Mosque Name" name="mosque_name">
+	      	</div>
+
+	      	<div class="form-group">
+		      	<label>Latitude:</label>	
+		      	<button type="button" onclick="getLocation()">Get Location</button> 
+		      	<input type="text" class="form-control" id="mosque_lat" placeholder="Mosque Latitude" name="mosque_lat" >
+	      	</div>
+
+	      	<div class="form-group">
+		      	<label>Longitude:</label>
+		      	<input type="text" class="form-control" id="mosque_lon" placeholder="Mosque Longitude" name="mosque_lon" >
+	      	</div>
+
+	      	<div class="form-group">
+		      	<label>Fajr Time:</label>
+		      	<input type="time" value="00:00" class="form-control" id="fajr_time" name="fajr_time">
+	  		</div>
+	  		<div class="form-group">
+		      	<label>Zuhur Time:</label>
+		      	<input type="time" placeholder="00:00" class="form-control" id="zuhur_time" name="zuhur_time">
+	        </div>
+	      	<div class="form-group">
+		      	<label>Asar Time</label>
+		      	<input type="time" placeholder="00:00" class="form-control" id="asar_time" name="asar_time">
+	      	</div>
+	      	<div class="form-group">
+		      	<label>Maghrib Time:</label>
+		      	<input type="time" placeholder="00:00" class="form-control" id="maghrib_time" name="maghrib_time">
+			</div>
+	      	<div class="form-group">
+		      	<label>Isha Time:</label>
+		      	<input type="time" placeholder="00:00" class="form-control" id="isha_time" name="isha_time">
+			</div>    
+	      	<div class="form-group">
+		      	<label>Contact Number:</label>
+		      	<input type="text" onfocus="this.value=''" class="form-control" id="contact_num" placeholder="Contact Number" name="contact_num">
+		    </div>
+	      	<div class="form-group">
+		      	<label>Image Files:</label>
+	    		<input id="file-picker" type="file" name="file" accept="image/*" multiple><br>	    
+	    	</div>
+	    	<div class="form-group">
+		      	<label>Uploader:</label>
+		      	<input type="text" class="form-control" id="uploader" placeholder="Uploader email ID" name="uploader">
+		    </div>
+
+
+		    
+		    <button type="submit" class="btn btn-default">Submit</button>
+		</div>
+
+
+	</form>
+
+
+
+</body>
+
+
+</html>
