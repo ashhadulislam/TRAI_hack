@@ -108,7 +108,7 @@ class Finger_Touch(db.Model):
     
     
 
-    def __init__(self, stb_id, active_status,lat,lon):
+    def __init__(self, stb_id, fingerprint_id,timestamp):
         self.stb_id = stb_id
         self.fingerprint_id = fingerprint_id
         self.timestamp=timestamp
