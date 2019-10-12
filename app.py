@@ -286,27 +286,202 @@ def get_gallery():
 
     #first, get all details of Mosques
     try:
-        mosques=Mosque.query.all()
-        # print("Results are",mosques)
-        # mosques=jsonify([e.serialize() for e in mosques])
-        print("Results are",mosques[0])
+        remote_presses=Remote_Press.query.all()
+        stb_users=STB_User.query.all()
+        finger_touches=Finger_Touch.query.all()
+
+
+        # for button presses
+
+        print("Results are",remote_presses)
+        remote_presses_list={}
+        remote_presses_list["id"]=[]
+        remote_presses_list["timestamp"]=[]
+        remote_presses_list["stb_id"]=[]
+        remote_presses_list["button_pressed"]=[]
+
+        
+        for remote_press in remote_presses:            
+            remote_presses_list["id"].append(remote_press.id)
+            remote_presses_list["timestamp"].append(remote_press.timestamp)            
+            remote_presses_list["stb_id"].append(remote_press.stb_id)
+            remote_presses_list["button_pressed"].append(remote_press.button_pressed)
+        
+        remote_presses_df = pd.DataFrame(remote_presses_list)
+        print("dataframe is")
+        print(remote_presses_df.head())
+
+        # for stb_users
+        stb_users_list={}
+        stb_users_list["id"]=[]
+        stb_users_list["age"]=[]
+        stb_users_list["gender"]=[]
+        stb_users_list["fingerprint_id"]=[]
+        stb_users_list["stb_id"]=[]
+
+
+        for stb_user in stb_users:
+            stb_users_list["id"].append(stb_user.id)
+            stb_users_list["age"].append(stb_user.age)
+            stb_users_list["gender"].append(stb_user.gender)
+            stb_users_list["fingerprint_id"].append(stb_user.fingerprint_id)
+            stb_users_list["stb_id"].append(stb_user.stb_id)
+        stb_users_df = pd.DataFrame(stb_users_list)
+        print(stb_users_df.head())
+
+
+        # for finger touch
+        finger_touch_list={}
+        finger_touch_list["id"]=[]
+        finger_touch_list["stb_id"]=[]
+        finger_touch_list["fingerprint_id"]=[]
+        finger_touch_list["timestamp"]=[]
+        
+
+
+        for finger_touch in finger_touches:
+            finger_touch_list["id"].append(finger_touch.id)
+            finger_touch_list["stb_id"].append(finger_touch.stb_id)
+            finger_touch_list["fingerprint_id"].append(finger_touch.fingerprint_id)
+            finger_touch_list["timestamp"].append(finger_touch.timestamp)
+            
+        finger_touch_df = pd.DataFrame(finger_touch_list)
+        print(finger_touch_df.head())
+
+
+
+        #change column type to make it date time
+        finger_touch_df['timestamp'] =  pd.to_datetime(finger_touch_df['timestamp'])
+        remote_presses_df['timestamp'] =  pd.to_datetime(remote_presses_df['timestamp'])
+
+
+        # sort dataframes by datetime
+        finger_touch_df.sort_values('timestamp')
+        remote_presses_df.sort_values('timestamp')
+
+        print("After sorting by time")
+        print("finger")
+        print(finger_touch_df.head())
+        print("remote")
+        print(remote_presses_df.head())
+
+
+        # now create the first dataframe
+        # finger_duration
+        # fingerprint_id, start_time, duration
+
+        prev_finger=finger_touch_df.iloc[0]["fingerprint_id"]
+        prev_start_time=finger_touch_df.iloc[0]["timestamp"]
+        
+        finger_duration={}
+        finger_duration["start_time"]=[]
+        finger_duration["fingerprint_id"]=[]
+        finger_duration["end_time"]=[]
+
+        finger_duration["start_time"].append(prev_start_time)
+        finger_duration["fingerprint_id"].append(prev_finger)
+
+        count=0
+        for index, row in finger_touch_df.iterrows():
+            if count==0:
+                count=1
+                continue
+            if prev_finger!=row["fingerprint_id"]:
+                time_of_change=row["timestamp"]
+                finger_duration["end_time"].append(time_of_change)
+
+                prev_finger=row["fingerprint_id"]
+                prev_start_time=row["timestamp"]
+                
+                finger_duration["start_time"].append(prev_start_time)
+                finger_duration["fingerprint_id"].append(prev_finger)
+        print("now = ",pd.Timestamp.now())                
+        finger_duration["end_time"].append(pd.Timestamp.now())
+        print(finger_duration)
+        finger_duration_df = pd.DataFrame(finger_duration)
+
+        print("Individual duration")
+        print(finger_duration_df.head())
+
+
+        finger_channel_duration={}
+        finger_channel_duration["start_time"]=[]
+        finger_channel_duration["fingerprint_id"]=[]
+        finger_channel_duration["end_time"]=[]
+        finger_channel_duration["button_pressed"]=[]
+        
+
+
+
+
+        for index, row in finger_duration_df.iterrows():
+            start_time=row["start_time"]
+            end_time=row["end_time"]
+            the_fingerprint_id=row["fingerprint_id"]
+            print("times are",start_time,end_time,the_fingerprint_id)
+            
+            # filter for all buttons pressed between a users
+            # start of touching the finger print device
+            # till any other person touches the finger print device
+
+            filtered_remote=remote_presses_df[(remote_presses_df.timestamp >= start_time) & (remote_presses_df.timestamp <= end_time)]
+            
+            print("filtered on finger touch time")
+            print(filtered_remote.head())
+            prev_finger=the_fingerprint_id
+            prev_start_time=filtered_remote.iloc[0]["timestamp"]
+            prev_button=filtered_remote.iloc[0]["button_pressed"]
+
+            print("getting data")
+
+            # adding to the list
+            finger_channel_duration["start_time"].append(prev_start_time)
+            finger_channel_duration["fingerprint_id"].append(prev_finger)
+            finger_channel_duration["button_pressed"].append(prev_button)
+
+            print("getting data2")
+            count=0
+            for index2,row2 in filtered_remote.iterrows():
+                if count==0:
+                    count+=1
+                    continue
+                if prev_button!=row2["button_pressed"]:
+                    print("New value")
+                    finger_channel_duration["end_time"].append(row2["timestamp"])
+                    finger_channel_duration["start_time"].append(row2["timestamp"])
+                    finger_channel_duration["button_pressed"].append(row2["button_pressed"])
+                    finger_channel_duration["fingerprint_id"].append(prev_finger)
+
+                    prev_button=row2["button_pressed"]
+
+
+            finger_channel_duration["end_time"].append(end_time)
+        
+
+
+        print("finger channel duration ",finger_channel_duration)
+        finger_channel_duration_df = pd.DataFrame(finger_channel_duration)
+
+        finger_channel_duration_df['start_time'] =  pd.to_datetime(finger_channel_duration_df['start_time'])
+        finger_channel_duration_df['end_time'] =  pd.to_datetime(finger_channel_duration_df['end_time'])
+
+        finger_channel_duration_df["duration"]=finger_channel_duration_df["end_time"]-finger_channel_duration_df["start_time"]
+
+        print("Final dataframe")
+        print(finger_channel_duration_df.head(10))
+
+
+
+
+
     except Exception as e:
         return(str(e))    
 
-    directories = os.listdir('./files')
-    if ".gitignore" in directories:
-        directories.remove(".gitignore")
-    if ".DS_Store" in directories:
-        directories.remove(".DS_Store")
+    
 
-    files=[]
-    for directory in directories:
-        current_files=os.listdir('./files/'+directory)        
-        for file in current_files:
-            files.append((directory,file))
-
-    print(files)
-    return render_template("gallery.html", items=mosques)
+    
+    # return render_template("gallery.html", items=None)
+    return("Expressed")
 
 
 def get_time_stamp_with_prefix(pref):
