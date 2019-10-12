@@ -94,4 +94,33 @@ class STB(db.Model):
             'active_status': self.active_status,
             'lat': self.lat,
             'lon': self.lon
-        }                
+        }   
+
+
+
+class Finger_Touch(db.Model):
+    __tablename__ = 'finger_touch'
+
+    id = db.Column(db.Integer, primary_key=True)
+    stb_id=db.Column(db.String())
+    fingerprint_id = db.Column(db.String())
+    timestamp = db.Column(db.String())
+    
+    
+
+    def __init__(self, stb_id, active_status,lat,lon):
+        self.stb_id = stb_id
+        self.fingerprint_id = fingerprint_id
+        self.timestamp=timestamp
+
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+    
+    def serialize(self):
+        return {
+            'id': self.id, 
+            'stb_id': self.stb_id,
+            'fingerprint_id': self.fingerprint_id,
+            'timestamp': self.timestamp
+        }   

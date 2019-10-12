@@ -30,7 +30,7 @@ application.config.from_object(os.environ['APP_SETTINGS'])
 application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(application)
 
-from models import STB_User,Remote_Press,STB
+from models import STB_User,Remote_Press,STB,Finger_Touch
 
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -77,6 +77,26 @@ def add_to_S3_bucket(foldername_in_S3,filename,file_location):
         return("Uploaded file successfully")
     except Exception as e:
         return str(e)
+
+@application.route('/add/finger_touch',methods=["POST"])
+def add_finger_touch():
+    data = request.get_json()
+
+    obj=Remote_Press(
+            stb_id=data["stb_id"],
+            fingerprint_id=data["fingerprint_id"],
+            timestamp=data["timestamp"],
+            )
+    try:
+        
+        db.session.add(obj)
+        db.session.commit()
+        print( "finger_touch added. finger_touch id={}".format(obj.id),"finger_touch")
+        return jsonify(data)
+    except Exception as e:
+        return(str(e),None)
+
+
 
 @application.route('/add/remote_press',methods=["POST"])
 def add_remote_press():
