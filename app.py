@@ -410,6 +410,8 @@ def get_gallery():
         finger_channel_duration={}
         finger_channel_duration["start_time"]=[]
         finger_channel_duration["fingerprint_id"]=[]
+        finger_channel_duration["age"]=[]
+        finger_channel_duration["gender"]=[]
         finger_channel_duration["end_time"]=[]
         finger_channel_duration["button_pressed"]=[]
         
@@ -441,6 +443,13 @@ def get_gallery():
             finger_channel_duration["start_time"].append(prev_start_time)
             finger_channel_duration["fingerprint_id"].append(prev_finger)
             finger_channel_duration["button_pressed"].append(prev_button)
+            # add user details by fingerprintid
+            filtered_user=stb_users_df[(stb_users_df.fingerprint_id == prev_finger)]
+            finger_channel_duration["age"].append(filtered_user.iloc[0]["age"])
+            finger_channel_duration["gender"].append(filtered_user.iloc[0]["gender"])
+
+
+
 
             print("getting data2")
             count=0
@@ -454,6 +463,11 @@ def get_gallery():
                     finger_channel_duration["start_time"].append(row2["timestamp"])
                     finger_channel_duration["button_pressed"].append(row2["button_pressed"])
                     finger_channel_duration["fingerprint_id"].append(prev_finger)
+
+                    # add user details by fingerprintid
+                    filtered_user=stb_users_df[(stb_users_df.fingerprint_id == prev_finger)]
+                    finger_channel_duration["age"].append(filtered_user.iloc[0]["age"])
+                    finger_channel_duration["gender"].append(filtered_user.iloc[0]["gender"])
 
                     prev_button=row2["button_pressed"]
 
@@ -485,7 +499,8 @@ def get_gallery():
 
     
     # return render_template("gallery.html", items=None)
-    return("Expressed")
+    # return("Expressed")
+    return render_template('gallery2.html',  tables=[finger_channel_duration_df.to_html(classes='data')], titles=finger_channel_duration_df.columns.values)
 
 
 def get_time_stamp_with_prefix(pref):
