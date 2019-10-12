@@ -4,21 +4,15 @@ class STB_User(db.Model):
     __tablename__ = 'stb_user'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String())
     age=db.Column(db.String())
     gender=db.Column(db.String())
-    email = db.Column(db.String())
-    contact = db.Column(db.String())
     fingerprint_id = db.Column(db.String())
     stb_id = db.Column(db.String())
     
 
-    def __init__(self, name, age, gender, email, contact, fingerprint_id, stb_id):
-        self.name = name
+    def __init__(self, age, gender, fingerprint_id, stb_id):
         self.age = age
         self.gender = gender
-        self.email = email
-        self.contact = contact
         self.fingerprint_id = fingerprint_id
         self.stb_id = stb_id
 
@@ -29,11 +23,8 @@ class STB_User(db.Model):
     def serialize(self):
         return {
             'id': self.id, 
-            'name': self.name,
             'age': self.age,
             'gender': self.gender,
-            'email':self.email,
-            'contact': self.contact,
             'fingerprint_id':self.fingerprint_id,
             'stb_id': self.stb_id,
 

@@ -123,11 +123,8 @@ def add_stb_user():
     data = request.get_json()
 
     obj=STB_User(
-            name = data["name"],
             age = data["age"],
-            gender= data["gender"],
-            email= data["email"],
-            contact = data["contact"],
+            gender= data["gender"],            
             fingerprint_id = data["fingerprint_id"],
             stb_id = data["stb_id"],
             )
