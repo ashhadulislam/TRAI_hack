@@ -80,9 +80,10 @@ def add_to_S3_bucket(foldername_in_S3,filename,file_location):
 
 @application.route('/add/finger_touch',methods=["POST"])
 def add_finger_touch():
+    print("trying")
     data = request.get_json()
 
-    obj=Remote_Press(
+    obj=Finger_Touch(
             stb_id=data["stb_id"],
             fingerprint_id=data["fingerprint_id"],
             timestamp=data["timestamp"],
