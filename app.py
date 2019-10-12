@@ -444,6 +444,7 @@ def get_gallery():
             finger_channel_duration["fingerprint_id"].append(prev_finger)
             finger_channel_duration["button_pressed"].append(prev_button)
             # add user details by fingerprintid
+            print("getting data2")
             filtered_user=stb_users_df[(stb_users_df.fingerprint_id == prev_finger)]
             finger_channel_duration["age"].append(filtered_user.iloc[0]["age"])
             finger_channel_duration["gender"].append(filtered_user.iloc[0]["gender"])
@@ -451,7 +452,7 @@ def get_gallery():
 
 
 
-            print("getting data2")
+            print("getting data3")
             count=0
             for index2,row2 in filtered_remote.iterrows():
                 if count==0:
