@@ -360,6 +360,7 @@ def get_gallery():
         # sort dataframes by datetime
         finger_touch_df.sort_values('timestamp')
         remote_presses_df.sort_values('timestamp')
+        print("dframes sorted upon timestamp")
 
         print("After sorting by time")
         print("finger")
