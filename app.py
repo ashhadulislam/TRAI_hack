@@ -445,7 +445,9 @@ def get_gallery():
             finger_channel_duration["button_pressed"].append(prev_button)
             # add user details by fingerprintid
             print("getting data2")
+            print("looking for",prev_finger)
             filtered_user=stb_users_df[(stb_users_df.fingerprint_id == prev_finger)]
+            print(filtered_user.shape)
             finger_channel_duration["age"].append(filtered_user.iloc[0]["age"])
             finger_channel_duration["gender"].append(filtered_user.iloc[0]["gender"])
 
