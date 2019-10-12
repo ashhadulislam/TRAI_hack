@@ -308,7 +308,7 @@ def get_gallery():
             remote_presses_list["button_pressed"].append(remote_press.button_pressed)
         
         remote_presses_df = pd.DataFrame(remote_presses_list)
-        print("dataframe is")
+        print("remote press dataframe is")
         print(remote_presses_df.head())
 
         # for stb_users
@@ -327,6 +327,7 @@ def get_gallery():
             stb_users_list["fingerprint_id"].append(stb_user.fingerprint_id)
             stb_users_list["stb_id"].append(stb_user.stb_id)
         stb_users_df = pd.DataFrame(stb_users_list)
+        print("stb user dataframe is")
         print(stb_users_df.head())
 
 
@@ -346,6 +347,7 @@ def get_gallery():
             finger_touch_list["timestamp"].append(finger_touch.timestamp)
             
         finger_touch_df = pd.DataFrame(finger_touch_list)
+        print("finger touch dataframe is")
         print(finger_touch_df.head())
 
 
@@ -465,6 +467,7 @@ def get_gallery():
         finger_channel_duration_df['start_time'] =  pd.to_datetime(finger_channel_duration_df['start_time'])
         finger_channel_duration_df['end_time'] =  pd.to_datetime(finger_channel_duration_df['end_time'])
 
+        # this will break for days?
         finger_channel_duration_df["duration"]=finger_channel_duration_df["end_time"]-finger_channel_duration_df["start_time"]
 
         print("Final dataframe")
